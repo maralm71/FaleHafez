@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>فال حافظ تصادفی</title>
+    <title>فال حافظ</title>
     <style>
         body {
-            font-family: 'Tahoma', sans-serif;
+            font-family: Arial, sans-serif;
             text-align: center;
             margin: 50px;
             direction: rtl;
-            background-color: #f9f3e4;
+            background-color: #ffebcd;
+            background-image: url('https://example.com/hafez-nowruz.jpg'); /* لینک تصویر حافظ و عید نوروز */
+            background-size: cover;
+            background-position: center;
         }
-        .fal-box {
-            background: #fff;
+        #poem-container {
+            background: rgba(255, 255, 255, 0.8);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -22,44 +25,42 @@
         button {
             margin-top: 20px;
             padding: 10px 20px;
-            background: #8d6e63;
-            color: white;
-            border: none;
+            font-size: 16px;
             cursor: pointer;
+            border: none;
+            background-color: #ff4081;
+            color: white;
             border-radius: 5px;
         }
-        button:hover {
-            background: #6d4c41;
+        #new-year-message {
+            margin-top: 30px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #d32f2f;
         }
     </style>
+    <script>
+        function getRandomPoem() {
+            let poems = [
+                {verse: "بر لب دریای خرابات منم / در دل این بحر حقایق کفنم", meaning: "من در دریای عرفان و حقیقت غرقم و در آن فنا شده‌ام."},
+                {verse: "سینه از آتش دل در غم جانانه بسوخت / آتشی بود در این خانه که کاشانه بسوخت", meaning: "عشق و غم یار، دل مرا چنان سوزاند که همه وجودم را خاکستر کرد."},
+                {verse: "اگر آن ترک شیرازی بدست آرد دل ما را / به خال هندویش بخشم سمرقند و بخارا را", meaning: "اگر محبوب زیبایم دل مرا بپذیرد، در برابرش همه دارایی‌هایم را فدا می‌کنم."},
+                {verse: "ای که در کوی خرابات مقامی داری / جمِّ جم را چه خبر از تو که جامی داری", meaning: "ای کسی که در مسیر عشق جایگاهی داری، کسی مانند پادشاهان از این سیر و سلوک آگاه نیست."},
+                {verse: "حافظا چون غم و شادی جهان در گذر است / بهتر آن است که من خاطر خود خوش دارم", meaning: "حافظ! از آنجا که دنیا ناپایدار است، بهتر است که خود را شاد و آسوده نگه داریم."}
+            ];
+            let randomIndex = Math.floor(Math.random() * poems.length);
+            document.getElementById("poem").innerText = poems[randomIndex].verse;
+            document.getElementById("meaning").innerText = poems[randomIndex].meaning;
+        }
+    </script>
 </head>
-<body>
-    <h1>فال حافظ تصادفی</h1>
-    <div class="fal-box">
-        <p id="fal"></p>
-        <audio id="falAudio" controls hidden></audio>
-        <button onclick="generateFal()">فال جدید</button>
-    </div><script>
-    const falList = [
-        {text: "سال‌ها دل طلب جام جم از ما می‌کرد / وان چه خود داشت ز بیگانه تمنا می‌کرد", audio: "audio1.mp3"},
-        {text: "ما ز یاران چشم یاری داشتیم / خود غلط بود آنچه می‌پنداشتیم", audio: "audio2.mp3"},
-        {text: "ای دل گر از آن چاه زنخدان به درآیی / هر جا که روی زود پشیمان شده باشی", audio: "audio3.mp3"},
-        {text: "صوفی ار باده به اندازه خورد نوشش باد / ور نه اندیشه این کار فراموشش باد", audio: "audio4.mp3"},
-        {text: "در کوی نیک نامی ما را گذر ندادند / گر تو نمی‌پسندی تغییر کن قضا را", audio: "audio5.mp3"}
-    ];
-
-    function generateFal() {
-        const randomIndex = Math.floor(Math.random() * falList.length);
-        const selectedFal = falList[randomIndex];
-        document.getElementById("fal").innerText = selectedFal.text;
-        const audioElement = document.getElementById("falAudio");
-        audioElement.src = selectedFal.audio;
-        audioElement.hidden = false;
-        audioElement.play();
-    }
-
-    window.onload = generateFal;
-</script>
-
+<body onload="getRandomPoem()">
+    <h1>فال حافظ</h1>
+    <div id="poem-container">
+        <p id="poem">...</p>
+        <p id="meaning" style="font-style: italic; color: gray;">...</p>
+    </div>
+    <button onclick="getRandomPoem()">فال جدید</button>
+    <div id="new-year-message">سال نو ۱۴۰۴ مبارک!</div>
 </body>
 </html>
