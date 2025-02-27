@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فال حافظ با موسیقی و گوینده</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: white;
+        }
+        video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.5;
+        }
+        #fal-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        audio {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>📷 لبخند بزنید تا فال شما نمایش داده شود!</h2>
+    <video id="video" autoplay></video>
+    <div id="fal-text">منتظر تشخیص چهره...</div>
+    <audio id="background-music" loop autoplay>
+        <source src="https://www.bensound.com/bensound-music/bensound-relaxing.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const falList = {
+            happy: [
+                "زندگی شیرین است، لحظات را غنیمت شمار!",
+                "روزهای خوب در راه است، لبخند بزن!",
+                "خوش باش که هر که راز داند، داند که زمانه بی‌وفا نیست.",
+                "از بخت شکر دارم و از روزگار هم، تا وقت خوش که دست دهد، مغتنم شمار!",
+                "به جهان خرم از آنم که جهان خرم از اوست، عاشقم بر همه عالم که همه عالم از اوست."
+            ],
+            sad: [
+                "غم مخور که این نیز بگذرد...",
+                "صبور باش، شادی بازخواهد گشت.",
+                "هر که را با خط سبزت سر سودا باشد، پای از این دایره بیرون ننهد تا باشد.",
+                "ز دست جور تو گفتم ز دیده خون بفشانم، بگفت اگر بگریی، به ماتم تو بگریم!",
+                "صبوری و تحمل کن که عشق آسان نگردد، به جز صبر و تحمل چاره‌ای دیگر ندارم."
+            ],
+            surprised: [
+                "اتفاقات خوب در راه است، آماده باش!",
+                "شگفتی‌ها تو را فرا خواهند گرفت!",
+                "جهان پر از شگفتی‌هاست، چشم دل باز کن!",
+                "ای عاشقان ای عاشقان، پیمانه را گم کرده‌ام، زآن می که در پیمانه‌ها، اندازه را گم کرده‌ام!",
+                "هر دم از این باغ بری می‌رسد، تازه‌تر از تازه‌تری می‌رسد!"
+            ],
+            neutral: [
+                "آرامش کلید خوشبختی است.",
+                "در مسیر درست هستی، ادامه بده!",
+                "دل به دنیا مبند که بی‌وفاست!",
+                "گر در طلب گوهر کانی، کان باش، ور در طلب لعل بدخشی، آن باش!",
+                "نگران مباش، روزگار با تو مهربان خواهد بود."
+            ]
+        };
+
+        async function startFaceDetection() {
+            const video = document.getElementById('video');
+            const falText = document.getElementById('fal-text');
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+
+            // بارگذاری مدل‌های کتابخانه face-api.js
+            await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/face-api.js/weights/');
+            await faceapi.nets.faceExpressionNet.loadFromUri('https://cdn.jsdelivr.net/npm/face-api.js/weights/');
+
+            setInterval(async () => {
+                const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+                    .withFaceExpressions();
+
+                if (detections.length > 0) {
+                    const expressions = detections[0].expressions;
+                    let mood = "neutral";
+
+                    if (expressions.happy > 0.5) mood = "happy";
+                    else if (expressions.sad > 0.5) mood = "sad";
+                    else if (expressions.surprised > 0.5) mood = "surprised";
+
+                    let selectedFal = falList[mood][Math.floor(Math.random() * falList[mood].length)];
+                    falText.innerText = "✨ فال شما: " + selectedFal;
+
+                    speakText(selectedFal);
+                }
+            }, 5000);
+        }
+
+        function speakText(text) {
+            let msg = new SpeechSynthesisUtterance();
+            msg.text = text;
+            msg.lang = "fa-IR";  
+            msg.rate = 0.9;  
+            speechSynthesis.speak(msg);
+        }
+
+        startFaceDetection();
+    </script>
+
+</body>
+</html>
